@@ -1,0 +1,35 @@
+Preprocessing SQL statements
+
+DELETE 
+FROM tweets 
+WHERE text like “RT%”;
+
+DELETE
+FROM tweets
+WHERE place_id IS NOT NULL
+	AND place_id IN (
+    		SELECT id 
+    		FROM place
+    		WHERE country_code != 'GB');
+			
+DELETE
+FROM tweets 
+LEFT JOIN place 
+ON tweets.place_id = place.id
+WHERE tweets.id in 
+(SELECT tweet_id 
+FROM tweet_coordinates 
+WHERE  lat > 62 OR lat < 49 OR lon < -10 OR lon > 3
+);
+
+DELETE 
+FROM tweets
+WHERE lang not like "en%";
+
+DELETE
+FROM tweets 
+WHERE user_id IN
+(SELECT id 
+FROM users
+WHERE utc_offset not like "3600" and utc_offset not like "0" and utc_offset not like "-3600"
+);
